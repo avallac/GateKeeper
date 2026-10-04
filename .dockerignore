@@ -1,0 +1,4 @@
+.git
+.idea
+configs/user.yaml
+configs/app.local.yaml

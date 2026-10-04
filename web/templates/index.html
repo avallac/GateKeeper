@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Automatic Intercom Door Control</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin: 0 0 18px;
+            font-size: 22px;
+        }
+
+        .door-item {
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .door-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .door-name {
+            font-weight: bold;
+        }
+
+        .open-button {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 14px;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .open-button:hover {
+            background: #1e293b;
+        }
+
+        .call-item {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 16px;
+            background: #ffffff;
+        }
+
+        .call-photo {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            background: #e2e8f0;
+        }
+
+        .call-photo img {
+            display: block;
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .photo-label {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 12px;
+        }
+
+        .call-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .call-content:only-child {
+            grid-column: 1 / -1;
+        }
+
+        .call-title {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .call-time {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .call-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .call-status {
+            background: #f1f5f9;
+            color: #334155;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .details-button {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 12px;
+            padding: 9px 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .details-button:hover {
+            background: #f8fafc;
+        }
+
+        @media (max-width: 800px) {
+            .header,
+            .brand {
+                align-items: flex-start;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .call-item {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="header">
+        <div class="brand">
+            <div><img width="64px" src="static/logo.png"></div>
+            <div>
+                <h1>GateKeeper</h1>
+                <p class="subtitle">Monitor calls and open doors remotely.</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="layout">
+        <aside class="card">
+            {{range .Sites}}
+            <h2>{{.Name}}</h2>
+            {{range .Boards}}
+            <div class="door-item">
+                <div class="door-row">
+                    <span class="door-name">{{.Name}}</span>
+                </div>
+                <form action="open_door" method="POST">
+                    <input type="hidden" name="id" value="{{.Identity}}">
+                    <button type="submit" class="open-button">Open Door</button>
+                </form>
+            </div>
+            {{end}}
+            {{end}}
+        </aside>
+
+        <section class="card">
+            <h2>Call History</h2>
+
+            {{if .Log}}
+                {{range .Log}}
+                <article class="call-item">
+                    {{if .Photo}}
+                    <div class="call-photo">
+                        <img src="data:image/jpeg;base64,{{.Photo}}" />
+                    </div>
+                    {{end}}
+                    <div class="call-content">
+                        <div>
+                            <h3 class="call-title">{{.Title}}</h3>
+                            <div class="call-time">{{.Time}}</div>
+                        </div>
+                    </div>
+                </article>
+                {{end}}
+            {{else}}
+                Empty
+            {{end}}
+        </section>
+    </section>
+</main>
+</body>
+</html>
+

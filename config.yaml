@@ -1,0 +1,27 @@
+name: "GateKeeper"
+version: "1.0.0"
+slug: "gatekeeper"
+description: "Bridges an IPGuard intercom to Home Assistant via MQTT discovery (door-open button, call event, call snapshot)."
+url: "https://github.com/avallac/GoDoorApp"
+arch:
+  - amd64
+startup: application
+boot: auto
+init: false
+ingress: true
+ingress_port: 8080
+panel_icon: "mdi:door"
+panel_title: "GateKeeper"
+webui: "http://[HOST]:[PORT:8080]/"
+image: "ghcr.io/avallac/gatekeeper-{arch}"
+services:
+  - "mqtt:want"
+hassio_api: true
+map:
+  - "data:rw"
+options:
+  auth_address: "tcp://178.32.147.216:5579"
+  main_address: "tcp://178.32.147.216:5577"
+schema:
+  auth_address: "str"
+  main_address: "str"
