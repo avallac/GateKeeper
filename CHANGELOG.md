@@ -1,13 +1,16 @@
 # Changelog
 
+## 1.1.2
+
+- Fixed the same kind of decode error on `responder_type` (`cannot unmarshal string
+  into ... int`): the field is now parsed via a new tolerant `FlexInt` type.
+
 ## 1.1.1
 
 - Fixed a decode error on `brd_sp_call_log` (`cannot unmarshal string into ... bool`):
   the IPGuard server inconsistently sends `open_status` as either a JSON boolean or a
   stringified boolean. This field is now parsed via a new tolerant `FlexBool` type, so
   the call-log message (and its photo/snapshot) is no longer dropped.
-- Fixed the same kind of decode error on `responder_type` (`cannot unmarshal string
-  into ... int`): the field is now parsed via a new tolerant `FlexInt` type.
 
 ## 1.1.0
 
