@@ -24,6 +24,8 @@ const (
 	AppStatusError          AppStatus = iota
 )
 
+const maxLogSize = 50
+
 type RelaysUpdatedFunc func(sites []AppSite)
 type CallLogFunc func(boardID string, log AppLog, body message.BrdSpCallLogBody)
 
@@ -152,7 +154,7 @@ func (app *Client) handleSpOpenDoorAck(msg message.BrdSpOpenDoorAckMessage) erro
 	event := AppLog{}
 	event.Title = "Door \"" + app.getDoorNameById(msg.Header.Sender) + "\" was open"
 	event.Time = logTime.Format("2006-01-02 15:04:05")
-	app.Log = append(app.Log, event)
+	app.appendLog(event)
 	return nil
 }
 
@@ -162,7 +164,7 @@ func (app *Client) handleBrdSpCallLog(msg message.BrdSpCallLogMessage) error {
 	event.Title = "Incoming call from \"" + app.getDoorNameById(msg.Header.Sender) + "\""
 	event.Photo = msg.Body.PhotoData
 	event.Time = logTime.Format("2006-01-02 15:04:05")
-	app.Log = append(app.Log, event)
+	app.appendLog(event)
 	for _, fn := range app.onCallLog {
 		fn(msg.Header.Sender, event, msg.Body)
 	}
@@ -241,7 +243,7 @@ func (app *Client) OpenDoor(id string) {
 	event.Title = "Request sent to open door \"" + app.getDoorNameById(id) + "\""
 	event.Time = now.Format("2006-01-02 15:04:05")
 	event.Open = true
-	app.Log = append(app.Log, event)
+	app.appendLog(event)
 	app.mainApi.OpenDoor(id)
 }
 
@@ -264,6 +266,13 @@ func (app *Client) OnRelaysUpdated(fn RelaysUpdatedFunc) {
 
 func (app *Client) OnCallLog(fn CallLogFunc) {
 	app.onCallLog = append(app.onCallLog, fn)
+}
+
+func (app *Client) appendLog(event AppLog) {
+	app.Log = append(app.Log, event)
+	if len(app.Log) > maxLogSize {
+		app.Log = app.Log[len(app.Log)-maxLogSize:]
+	}
 }
 
 func (app *Client) getDoorNameById(id string) string {

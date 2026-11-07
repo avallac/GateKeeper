@@ -1,3 +1,0 @@
-au_thAddress: "tcp://localhost:5579"
-ma_inAddress: "tcp://localhost:5577"
-fa_keServer: true

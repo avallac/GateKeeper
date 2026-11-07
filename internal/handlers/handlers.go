@@ -61,8 +61,6 @@ func (h *Handlers) Home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ingressBase returns the path prefix HA Supervisor's Ingress proxy expects redirects
-// to stay under (X-Ingress-Path), or "" outside of Ingress (direct/dev access).
 func ingressBase(r *http.Request) string {
 	return r.Header.Get("X-Ingress-Path")
 }
