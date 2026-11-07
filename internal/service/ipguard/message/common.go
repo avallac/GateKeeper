@@ -2,6 +2,8 @@ package message
 
 import (
 	"encoding/json"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,6 +22,26 @@ type Message[T any] struct {
 
 type BaseBody struct {
 	Token string `json:"token"`
+}
+
+type FlexBool bool
+
+func (b *FlexBool) UnmarshalJSON(data []byte) error {
+	var v bool
+	if err := json.Unmarshal(data, &v); err == nil {
+		*b = FlexBool(v)
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("cannot unmarshal %s into FlexBool", data)
+	}
+	v, err := strconv.ParseBool(s)
+	if err != nil {
+		return fmt.Errorf("cannot unmarshal %q into FlexBool", s)
+	}
+	*b = FlexBool(v)
+	return nil
 }
 
 func NewBaseBody() BaseBody {
