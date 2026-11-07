@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- Added `README.md` with setup, configuration, fake-server, and legal-notice sections.
+- Limited the in-memory event log to the last 50 entries; older events are now evicted
+  as new ones arrive.
+
 ## 1.0.0
 
 - Initial Home Assistant Supervisor add-on release.

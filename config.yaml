@@ -1,5 +1,5 @@
 name: "GateKeeper"
-version: "1.0.0"
+version: "1.0.1"
 slug: "gatekeeper"
 description: "Bridges an IPGuard intercom to Home Assistant via MQTT discovery (door-open button, call event, call snapshot)."
 url: "https://github.com/avallac/GateKeeper"
