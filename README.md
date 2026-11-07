@@ -75,7 +75,14 @@ Pairing state (phone/code/key) is persisted to disk so it survives restarts and 
 1. Install the official **Mosquitto broker** add-on first (Settings → Add-ons → Add-on
    Store) if you don't already have an MQTT broker. GateKeeper auto-detects its
    credentials from the Supervisor — no manual entry needed.
-2. Add this repository to your Home Assistant add-on store and install **GateKeeper**.
+2. In Home Assistant, go to **Settings → Add-ons → Add-on Store → ⋮ → Repositories** and
+   add:
+
+   ```
+   https://github.com/avallac/GateKeeper
+   ```
+
+   Then find **GateKeeper** in the store and install it.
 3. Start the add-on, then open its panel from the Home Assistant sidebar.
 4. Enter your name and phone number; you'll receive an SMS code to pair the app with
    your IPGuard account.
