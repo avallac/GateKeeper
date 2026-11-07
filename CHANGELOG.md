@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1
+
+- Fixed a decode error on `brd_sp_call_log` (`cannot unmarshal string into ... bool`):
+  the IPGuard server inconsistently sends `open_status` as either a JSON boolean or a
+  stringified boolean. This field is now parsed via a new tolerant `FlexBool` type, so
+  the call-log message (and its photo/snapshot) is no longer dropped.
+
 ## 1.1.0
 
 - Split the former combined "ring" event into two distinct MQTT Discovery events per
