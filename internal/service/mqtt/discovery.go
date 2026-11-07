@@ -55,12 +55,23 @@ func buttonPayload(board ipguard.AppBoard, siteName string) buttonDiscovery {
 	}
 }
 
-func eventPayload(board ipguard.AppBoard, siteName string) eventDiscovery {
+func ringEventPayload(board ipguard.AppBoard, siteName string) eventDiscovery {
 	return eventDiscovery{
 		Name:              board.Name + " Call",
 		UniqueID:          board.Identity + "_ring",
-		StateTopic:        eventTopic(board.Identity),
+		StateTopic:        ringTopic(board.Identity),
 		EventTypes:        []string{"ring"},
+		AvailabilityTopic: bridgeAvailabilityTopic,
+		Device:            buildDevice(board, siteName),
+	}
+}
+
+func photoEventPayload(board ipguard.AppBoard, siteName string) eventDiscovery {
+	return eventDiscovery{
+		Name:              board.Name + " Call Photo",
+		UniqueID:          board.Identity + "_photo",
+		StateTopic:        photoTopic(board.Identity),
+		EventTypes:        []string{"photo"},
 		AvailabilityTopic: bridgeAvailabilityTopic,
 		Device:            buildDevice(board, siteName),
 	}

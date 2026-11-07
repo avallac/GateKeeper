@@ -43,14 +43,25 @@ func TestButtonPayload(t *testing.T) {
 	}
 }
 
-func TestEventPayload(t *testing.T) {
-	payload := eventPayload(fixtureBoard, fixtureSite)
+func TestRingEventPayload(t *testing.T) {
+	payload := ringEventPayload(fixtureBoard, fixtureSite)
 
-	if payload.StateTopic != "gatekeeper/00000000-1111-2222-3333-444444444444/event" {
+	if payload.StateTopic != "gatekeeper/00000000-1111-2222-3333-444444444444/ring_event" {
 		t.Errorf("StateTopic = %q", payload.StateTopic)
 	}
 	if len(payload.EventTypes) != 1 || payload.EventTypes[0] != "ring" {
 		t.Errorf("EventTypes = %+v, want [ring]", payload.EventTypes)
+	}
+}
+
+func TestPhotoEventPayload(t *testing.T) {
+	payload := photoEventPayload(fixtureBoard, fixtureSite)
+
+	if payload.StateTopic != "gatekeeper/00000000-1111-2222-3333-444444444444/photo_event" {
+		t.Errorf("StateTopic = %q", payload.StateTopic)
+	}
+	if len(payload.EventTypes) != 1 || payload.EventTypes[0] != "photo" {
+		t.Errorf("EventTypes = %+v, want [photo]", payload.EventTypes)
 	}
 }
 

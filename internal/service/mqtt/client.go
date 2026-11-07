@@ -40,7 +40,10 @@ func NewClient(appConfig *service.AppConfig, app *ipguard.Client) (*Client, erro
 		client.subscribeCommands()
 	})
 	app.OnCallLog(func(boardID string, _ ipguard.AppLog, body message.BrdSpCallLogBody) {
-		client.publishCallLog(boardID, body)
+		client.publishPhotoEvent(boardID, body)
+	})
+	app.OnVideoCall(func(boardID string) {
+		client.publishRingEvent(boardID)
 	})
 
 	opts := pahomqtt.NewClientOptions().
@@ -70,7 +73,8 @@ func (c *Client) publishAllDiscovery() {
 	for _, site := range c.app.Sites {
 		for _, board := range site.Boards {
 			c.publishDiscovery("button", board.Identity, "open", buttonPayload(board, site.Name))
-			c.publishDiscovery("event", board.Identity, "ring", eventPayload(board, site.Name))
+			c.publishDiscovery("event", board.Identity, "ring", ringEventPayload(board, site.Name))
+			c.publishDiscovery("event", board.Identity, "photo", photoEventPayload(board, site.Name))
 			c.publishDiscovery("camera", board.Identity, "snapshot", cameraPayload(board, site.Name))
 		}
 	}
@@ -102,7 +106,7 @@ func (c *Client) subscribeCommands() {
 	}
 }
 
-func (c *Client) publishCallLog(boardID string, body message.BrdSpCallLogBody) {
+func (c *Client) publishPhotoEvent(boardID string, body message.BrdSpCallLogBody) {
 	if body.PhotoData != "" {
 		raw, err := base64.StdEncoding.DecodeString(body.PhotoData)
 		if err != nil {
@@ -112,11 +116,18 @@ func (c *Client) publishCallLog(boardID string, body message.BrdSpCallLogBody) {
 		}
 	}
 	payload, _ := json.Marshal(map[string]any{
-		"event_type":     "ring",
+		"event_type":     "photo",
 		"responder_name": body.ResponderName,
 		"ts":             body.Timestring,
 	})
-	c.publish(eventTopic(boardID), 0, false, payload)
+	c.publish(photoTopic(boardID), 0, false, payload)
+}
+
+func (c *Client) publishRingEvent(boardID string) {
+	payload, _ := json.Marshal(map[string]any{
+		"event_type": "ring",
+	})
+	c.publish(ringTopic(boardID), 0, false, payload)
 }
 
 func (c *Client) publish(topic string, qos byte, retained bool, payload any) {

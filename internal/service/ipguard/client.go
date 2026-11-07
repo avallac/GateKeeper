@@ -28,6 +28,7 @@ const maxLogSize = 50
 
 type RelaysUpdatedFunc func(sites []AppSite)
 type CallLogFunc func(boardID string, log AppLog, body message.BrdSpCallLogBody)
+type VideoCallFunc func(boardID string)
 
 type Client struct {
 	UserConfig      *service.UserConfig
@@ -40,6 +41,7 @@ type Client struct {
 	checkingCode    string
 	onRelaysUpdated []RelaysUpdatedFunc
 	onCallLog       []CallLogFunc
+	onVideoCall     []VideoCallFunc
 }
 
 type AppSite struct {
@@ -161,7 +163,7 @@ func (app *Client) handleSpOpenDoorAck(msg message.BrdSpOpenDoorAckMessage) erro
 func (app *Client) handleBrdSpCallLog(msg message.BrdSpCallLogMessage) error {
 	logTime := time.Unix(msg.Body.Timestamp, 0)
 	event := AppLog{}
-	event.Title = "Incoming call from \"" + app.getDoorNameById(msg.Header.Sender) + "\""
+	event.Title = "Photo from \"" + app.getDoorNameById(msg.Header.Sender) + "\""
 	event.Photo = msg.Body.PhotoData
 	event.Time = logTime.Format("2006-01-02 15:04:05")
 	app.appendLog(event)
@@ -172,7 +174,14 @@ func (app *Client) handleBrdSpCallLog(msg message.BrdSpCallLogMessage) error {
 }
 
 func (app *Client) handlePsSpSdpOffer(msg message.PsSpSdpOfferMessage) error {
-	app.OpenDoor(msg.Body.RemoteIdentity)
+	logTime := time.Now()
+	event := AppLog{}
+	event.Title = "Incoming call from \"" + app.getDoorNameById(msg.Header.Sender) + "\""
+	event.Time = logTime.Format("2006-01-02 15:04:05")
+	app.appendLog(event)
+	for _, fn := range app.onVideoCall {
+		fn(msg.Body.RemoteIdentity)
+	}
 	return nil
 }
 
@@ -266,6 +275,10 @@ func (app *Client) OnRelaysUpdated(fn RelaysUpdatedFunc) {
 
 func (app *Client) OnCallLog(fn CallLogFunc) {
 	app.onCallLog = append(app.onCallLog, fn)
+}
+
+func (app *Client) OnVideoCall(fn VideoCallFunc) {
+	app.onVideoCall = append(app.onVideoCall, fn)
 }
 
 func (app *Client) appendLog(event AppLog) {
