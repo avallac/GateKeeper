@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.4
+
+- Fixed the same kind of decode error on the message `Header`'s `timestamp` (`cannot
+  unmarshal string into ... int64`): since every message shares this header, the same
+  RFC3339-string encoding could break decoding of any event, not just `brd_sp_call_log`.
+  The field is now parsed via the tolerant `FlexInt64` type.
+
 ## 1.1.3
 
 - Fixed the same kind of decode error on `brd_sp_call_log`'s `timestamp` (`cannot

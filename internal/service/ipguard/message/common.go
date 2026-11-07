@@ -10,9 +10,9 @@ import (
 )
 
 type Header struct {
-	Event     string `json:"event"`
-	Sender    string `json:"sender"`
-	Timestamp int64  `json:"timestamp"`
+	Event     string    `json:"event"`
+	Sender    string    `json:"sender"`
+	Timestamp FlexInt64 `json:"timestamp"`
 }
 
 type Message[T any] struct {
@@ -99,7 +99,7 @@ func New[T any](event, sender string, body T) Message[T] {
 		Header: Header{
 			Event:     event,
 			Sender:    sender,
-			Timestamp: time.Now().UnixMilli(),
+			Timestamp: FlexInt64(time.Now().UnixMilli()),
 		},
 		Body: body,
 	}
