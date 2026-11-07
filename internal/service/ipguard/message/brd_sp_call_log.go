@@ -8,7 +8,7 @@ type BrdSpCallLogBody struct {
 	BaseBody
 	Timestamp      int64    `json:"timestamp"`
 	Timestring     string   `json:"timestring"`
-	ResponderType  int      `json:"responder_type"`
+	ResponderType  FlexInt  `json:"responder_type"`
 	ResponderID    string   `json:"responder_id"`
 	ResponderName  string   `json:"responder_name"`
 	OpenStatus     FlexBool `json:"open_status"`

@@ -44,6 +44,26 @@ func (b *FlexBool) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type FlexInt int
+
+func (i *FlexInt) UnmarshalJSON(data []byte) error {
+	var v int
+	if err := json.Unmarshal(data, &v); err == nil {
+		*i = FlexInt(v)
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("cannot unmarshal %s into FlexInt", data)
+	}
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		return fmt.Errorf("cannot unmarshal %q into FlexInt", s)
+	}
+	*i = FlexInt(v)
+	return nil
+}
+
 func NewBaseBody() BaseBody {
 	return BaseBody{Token: uuid.NewString()}
 }
