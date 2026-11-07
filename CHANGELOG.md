@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.3
+
+- Fixed the same kind of decode error on `brd_sp_call_log`'s `timestamp` (`cannot
+  unmarshal string into ... int64`): the IPGuard server sometimes sends it as an
+  RFC3339 date string instead of a Unix-millisecond number. The field is now parsed
+  via a new tolerant `FlexInt64` type.
+
 ## 1.1.2
 
 - Fixed the same kind of decode error on `responder_type` (`cannot unmarshal string

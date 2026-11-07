@@ -64,6 +64,32 @@ func (i *FlexInt) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// FlexInt64 unmarshals a JSON number, a numeric string, or an RFC3339 timestamp
+// string (converted to Unix milliseconds), since the IPGuard server inconsistently
+// encodes some timestamp fields as ISO date strings instead of numbers.
+type FlexInt64 int64
+
+func (i *FlexInt64) UnmarshalJSON(data []byte) error {
+	var v int64
+	if err := json.Unmarshal(data, &v); err == nil {
+		*i = FlexInt64(v)
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("cannot unmarshal %s into FlexInt64", data)
+	}
+	if v, err := strconv.ParseInt(s, 10, 64); err == nil {
+		*i = FlexInt64(v)
+		return nil
+	}
+	if t, err := time.Parse(time.RFC3339Nano, s); err == nil {
+		*i = FlexInt64(t.UnixMilli())
+		return nil
+	}
+	return fmt.Errorf("cannot unmarshal %q into FlexInt64", s)
+}
+
 func NewBaseBody() BaseBody {
 	return BaseBody{Token: uuid.NewString()}
 }

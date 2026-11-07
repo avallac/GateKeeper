@@ -161,7 +161,7 @@ func (app *Client) handleSpOpenDoorAck(msg message.BrdSpOpenDoorAckMessage) erro
 }
 
 func (app *Client) handleBrdSpCallLog(msg message.BrdSpCallLogMessage) error {
-	logTime := time.Unix(msg.Body.Timestamp, 0)
+	logTime := time.Unix(int64(msg.Body.Timestamp), 0)
 	event := AppLog{}
 	event.Title = "Photo from \"" + app.getDoorNameById(msg.Header.Sender) + "\""
 	event.Photo = msg.Body.PhotoData
